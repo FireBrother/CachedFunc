@@ -24,6 +24,11 @@ class CacheManager:
         self.__repos[name] = repo
         return name
 
+    def get_repo(self, name):
+        if name not in self.__repos:
+            raise NotInCacheError(name)
+        return self.__repos[name]
+
     def get(self, key):
         if len(self.__repos) == 0:
             logging.warning('No repo in CacheManager')
@@ -50,7 +55,7 @@ class CacheManager:
                         sig_dict[k.name] = kwargs[k.name]
                         del kwargs[k.name]
                     else:
-                        if (k.default is inspect._empty):
+                        if k.default is inspect._empty:
                             raise TypeError(f'{func.__name__}() missing 1 required positional argument: \'{k.name}\'')
                         sig_dict[k.name] = k.default
             args = args[end:]
